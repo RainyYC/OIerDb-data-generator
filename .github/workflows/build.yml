@@ -40,24 +40,10 @@ jobs:
 
           ln -s static.${STATIC_SHA512:0:7}.json dist/static.json
           ln -s result.${RESULT_SHA512:0:7}.txt  dist/result.txt
-      - name: Deploy to GitHub Pages
-        if: ${{ github.event_name == 'push' && github.repository_owner == 'oierdb-ng' }}
-        uses: peaceiris/actions-gh-pages@v3
+      - uses: actions/upload-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: dist
-          user_name: BaoshuoBot
-          user_email: bot@baoshuo.ren
-      - name: Deploy to server
-        uses: easingthemes/ssh-deploy@v2.1.5
-        env:
-          ARGS: "-avz --delete"
-          SOURCE: dist/
-          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          TARGET: ${{ secrets.REMOTE_PATH }}
-          EXCLUDE: .git,.github,.gitlab-ci.yml,.nojekyll
+          name: dist
+          path: dist/ # or path/to/artifact
 
   sync:
     if: ${{ github.event_name == 'push' && github.repository_owner == 'oierdb-ng' }}
